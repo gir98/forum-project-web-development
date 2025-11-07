@@ -1,36 +1,20 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 
 export default function CreateThread() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [tags, setTags] = useState("");
-  const [category, setCategory] = useState("");
+  const [form, setForm] = useState({ title: "", description: "", tags: "" });
   const navigate = useNavigate();
 
-  // ✅ redirect if not logged in
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("You must be logged in to create a thread!");
-      navigate("/login");
-    }
-  }, [navigate]);
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
-      await api.post(
-        "/threads",
-        { title, description, tags: tags.split(","), category },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      alert("Thread created!");
+      await api.post("/threads", { ...form, tags: form.tags.split(",").map(t => t.trim()) });
       navigate("/");
     } catch (err) {
-      console.error("❌ Create thread error:", err.response?.data || err.message);
+      console.error(err);
       alert("Failed to create thread");
     }
   };
@@ -39,29 +23,11 @@ export default function CreateThread() {
     <div>
       <h2>Create Thread</h2>
       <form onSubmit={handleSubmit}>
-        <input
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <input
-          placeholder="Tags (comma separated)"
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
-        />
-        <input
-          placeholder="Category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        />
+        <input name="title" placeholder="Title" onChange={handleChange} required />
+        <textarea name="description" placeholder="Description" onChange={handleChange} required />
+        <input name="tags" placeholder="Tags (comma separated)" onChange={handleChange} />
         <button type="submit">Create</button>
       </form>
     </div>
   );
 }
-  

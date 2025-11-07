@@ -1,18 +1,21 @@
 import mongoose from "mongoose";
 
+// Reply schema (subdocument)
 const replySchema = new mongoose.Schema({
   text: { type: String, required: true },
   author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  createdAt: { type: Date, default: Date.now },
+  children: [{ type: mongoose.Schema.Types.Mixed }], // allows nested replies
+  createdAt: { type: Date, default: Date.now }
 });
 
+// Thread schema
 const threadSchema = new mongoose.Schema({
-  title: String,
-  description: String,
+  title: { type: String, required: true },
+  description: { type: String },
+  author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   tags: [String],
-  category: String,
-  author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  replies: [replySchema],   // ✅ replies embedded
-}, { timestamps: true });
+  replies: [replySchema], // top-level replies
+  createdAt: { type: Date, default: Date.now }
+});
 
 export default mongoose.model("Thread", threadSchema);

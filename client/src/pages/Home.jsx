@@ -10,7 +10,7 @@ export default function Home() {
     // fetch threads
     api.get("/threads").then((res) => setThreads(res.data));
 
-    // fetch logged in user (if token exists)
+    // fetch logged in user
     const token = localStorage.getItem("token");
     if (token) {
       api
@@ -20,28 +20,13 @@ export default function Home() {
     }
   }, []);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this thread?")) return;
-
-    try {
-      await api.delete(`/threads/${id}`);
-      setThreads((prev) => prev.filter((t) => t._id !== id)); // update UI
-    } catch (err) {
-      alert("Failed to delete thread");
-    }
-  };
-
   return (
     <div>
       <h2>Forum Threads</h2>
       <ul>
         {threads.map((thread) => (
           <li key={thread._id}>
-            <Link to={`/threads/${thread._id}`}>{thread.title}</Link> —{" "}
-            {thread.author?.username}
-            {user && user.id === thread.author?._id && (
-              <button onClick={() => handleDelete(thread._id)}>🗑️ Delete</button>
-            )}
+            <Link to={`/threads/${thread._id}`}>{thread.title}</Link> — {thread.author?.username}
           </li>
         ))}
       </ul>

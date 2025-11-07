@@ -1,22 +1,30 @@
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import Thread from "./models/Thread.js";   // relative path (inside src)
+// import mongoose from "mongoose";
+// import dotenv from "dotenv";
+// import Thread from "./models/Thread.js"; // adjust path if needed
 
-dotenv.config();
+// dotenv.config();
 
-async function clearThreads() {
-  try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log("✅ Connected to MongoDB");
+// async function clearThreads() {
+//   try {
+//     // Connect to MongoDB
+//     await mongoose.connect(process.env.MONGO_URI, {
+//       useNewUrlParser: true,
+//       useUnifiedTopology: true,
+//     });
+//     console.log("✅ Connected to MongoDB");
 
-    const result = await Thread.deleteMany({});
-    console.log(`🗑️ Deleted ${result.deletedCount} threads`);
+//     // Delete all threads
+//     const result = await Thread.deleteMany({});
+//     console.log(`🗑️ Deleted ${result.deletedCount} threads`);
 
-    mongoose.disconnect();
-  } catch (err) {
-    console.error("❌ Error deleting threads:", err);
-    process.exit(1);
-  }
-}
+//   } catch (err) {
+//     console.error("❌ Error deleting threads:", err);
+//   } finally {
+//     // Ensure the connection is closed
+//     await mongoose.disconnect();
+//     console.log("🔌 Disconnected from MongoDB");
+//     process.exit(0);
+//   }
+// }
 
-clearThreads();
+// clearThreads();
